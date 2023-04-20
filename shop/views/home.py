@@ -1,15 +1,16 @@
 from django.shortcuts import render , redirect , HttpResponseRedirect
-from django.views import View
 from shop.models.products import Product
 from shop.models.category import Category
+from django.views import View
 
 
-class Index (View) :
-    def post(self, request):
+# Create your views here.
+class Index(View):
+
+    def post(self , request):
         product = request.POST.get('product')
         remove = request.POST.get('remove')
         cart = request.session.get('cart')
-        
         if cart:
             quantity = cart.get(product)
             if quantity:
@@ -17,9 +18,10 @@ class Index (View) :
                     if quantity<=1:
                         cart.pop(product)
                     else:
-                        cart[product] = quantity-1
+                        cart[product]  = quantity-1
                 else:
-                    cart[product] = quantity+1
+                    cart[product]  = quantity+1
+
             else:
                 cart[product] = 1
         else:
@@ -27,12 +29,16 @@ class Index (View) :
             cart[product] = 1
 
         request.session['cart'] = cart
-        return redirect('home')
-    
-    def get(self, request):
-        return HttpResponseRedirect(f'/shop{request.get_full_path()[1:]}')
-    
-def shop(request):
+        print('cart' , request.session['cart'])
+        return redirect('homepage')
+
+
+
+    def get(self , request):
+        # print()
+        return HttpResponseRedirect(f'/store{request.get_full_path()[1:]}')
+
+def store(request):
     cart = request.session.get('cart')
     if not cart:
         request.session['cart'] = {}
